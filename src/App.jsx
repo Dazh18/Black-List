@@ -1,9 +1,10 @@
-// src/App.js
+
 import { useState } from 'react';
+import { Box, Button, SimpleGrid, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, useDisclosure, } from '@chakra-ui/react';
 import SearchBar from './components/SearchBar';
 import InfoList from './components/InfoList';
 
-const data = [
+const initialData = [
   { name: 'Aguiar Yoel Jonás', details: 'Robó rompiendo los lockers' },
   { name: 'Alamo Diego', details: 'Se fue sin pagar' },
   { name: 'Carlos García', details: 'Detalles de Carlos García' },
@@ -63,22 +64,75 @@ const data = [
 ];
 
 function App() {
+  const [data, setData] = useState(initialData);
   const [searchTerm, setSearchTerm] = useState('');
+  const [blackList] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [newName, setNewName] = useState('');
+  const [newDetails, setNewDetails] = useState('');
 
   const handleSearchChange = (term) => {
     setSearchTerm(term);
-  };
+  }; 
 
   const filteredData = data.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleAddToBlackList = () => {
+    const newEntry = { name: newName, details: newDetails };
+    // Agrega el nuevo elemento al initialData
+    setData([...data, newEntry]); 
+    setNewName('');
+    setNewDetails('');
+    onClose();
+  };
+
   return (
-    <div className="App">
-      <h1 className="App2">Buscador de Información</h1>
-      <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
-      <InfoList filteredData={filteredData} />
-    </div>
+    <SimpleGrid align="center" justify="center" >
+      <Box textAlign="center">
+        <h1 className="App2">Buscador de Información</h1>
+        <Box display="flex" justifyContent="center">
+          <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
+        </Box>
+
+        {(searchTerm || blackList.length > 0) && (
+          <Box width="80%" maxWidth="300px" mx="auto"> 
+            <InfoList filteredData={[...filteredData, ...blackList]} />
+          </Box>
+        )}
+        <Button margin={10} onClick={onOpen}>
+          Añadir a BlackList
+        </Button>
+      </Box>
+      
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent  display="flex" alignItems="center" justifyContent="center" top={350}>
+          <ModalHeader>Añadir a la Lista Negra</ModalHeader>
+          <ModalBody>
+            <Input 
+              placeholder="Nombre" 
+              value={newName} 
+              onChange={(e) => setNewName(e.target.value)} 
+              mb={4} 
+            />
+            <Input 
+              placeholder="Detalles" 
+              value={newDetails} 
+              onChange={(e) => setNewDetails(e.target.value)} 
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleAddToBlackList}>
+              Guardar
+            </Button>
+            <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </SimpleGrid>
   );
 }
 

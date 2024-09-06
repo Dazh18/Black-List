@@ -1,6 +1,6 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  line-height: 1.1;
   font-weight: 400;
 
   color-scheme: light dark;
@@ -8,10 +8,14 @@
   background-color: #242424;
 
 }
-.App {
-  position: relative;
-}
 
+.list{
+  border: rgb(88, 37, 37) solid;
+  border-radius: 40px;
+  margin: 10px;
+  line-height: 1.1;
+  list-style: none;
+}
 
 .App2 {
   position: relative;
